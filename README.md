@@ -50,9 +50,27 @@ Please also follow usage instructions of each Zabbix component image:
 
 ### Docker Compose
 
-There is provided Docker Compose files for each set of base Operating System and Database engine.
+> [!NOTE]
+> The following requires `make` and `docker compose` version 2.24.0 or greater.
 
-Templates support several [Compose  profiles](https://docs.docker.com/compose/profiles/). Minimal set of services is brought up by default, to start additional components e.g. Zabbix Agent use profile 'full' or 'all'. Additionally, it is possible to start only required components.
+A Makefile is provided that will configure and run the necessary Docker Compose files supporting a variety of base Operating System and Database engine configurations.
+
+To get started clone this repository and then from the root directory of the repository run
+```
+make help
+```
+To start with the default configuration run 
+```
+make up
+```
+Use variables to customize the configuration to suit your needs.  For example, the following selects Postgres as the underlying database, alpine as the base OS, and exposes the web interface on ports 8282 and 8443:
+```
+make up DB=pgsql OS=alpine ZABBIX_WEB_NGINX_HTTP_PORT=8282 ZABBIX_WEB_NGINX_HTTPS_PORT=8443
+```
+Then to clean up run
+```
+make down DB=pgsql
+```
 
 ## Issues and Wiki
 
