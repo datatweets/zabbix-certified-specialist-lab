@@ -53,13 +53,15 @@ Please also follow usage instructions of each Zabbix component image:
 > [!NOTE]
 > The following requires `make` and `docker compose` version 2.24.0 or greater.
 
-A Makefile is provided that will configure and run the necessary Docker Compose files supporting a variety of base Operating System and Database engine configurations.
+You can use the Docker Compose files for MySQL and PostgreSQL (**compose.yaml** and **compose_pgsql.yaml**, respectively) directly with the ``docker compose`` command. The required images and the Compose file behavior can be configured through environment variables and the .env file. By default, Alpine-based images and the latest version from the current branch are used.
 
-To get started clone this repository and then from the root directory of the repository run
+In addition, a Makefile is provided to configure and run the required Docker Compose files, supporting a variety of base operating system and database engine combinations, as well as to build Zabbix components locally.
+
+To get started clone this repository and then from the root directory of the repository run:
 ```
 make help
 ```
-To start with the default configuration run 
+To start with the default configuration run:
 ```
 make up
 ```
@@ -67,10 +69,12 @@ Use variables to customize the configuration to suit your needs.  For example, t
 ```
 make up DB=pgsql OS=alpine ZABBIX_WEB_NGINX_HTTP_PORT=8282 ZABBIX_WEB_NGINX_HTTPS_PORT=8443
 ```
-Then to clean up run
+Then to clean up run:
 ```
 make down DB=pgsql
 ```
+
+Provided compose files support several [Compose  profiles](https://docs.docker.com/compose/profiles/). Minimal set of services is brought up by default, to start additional components e.g. Zabbix Agent use profile 'full' or 'all'. Additionally, it is possible to start only required components.
 
 ## Issues and Wiki
 
