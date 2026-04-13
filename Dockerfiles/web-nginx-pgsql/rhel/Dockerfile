@@ -19,7 +19,6 @@ RUN set -eux && \
     find "/tmp/zabbix-${ZBX_VERSION}/ui/locale" -name '*.po' -delete && \
     find "/tmp/zabbix-${ZBX_VERSION}/ui/locale" -name '*.sh' -delete
 
-ARG OS_BASE_IMAGE=registry.access.redhat.com/ubi10/ubi-minimal:10.1
 FROM ${OS_BASE_IMAGE}
 
 ARG MAJOR_VERSION

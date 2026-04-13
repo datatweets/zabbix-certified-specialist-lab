@@ -81,17 +81,8 @@ RUN --mount=type=tmpfs,target=/var/lib/dnf/ \
             jq" && \
     microdnf -y install \
             --disablerepo="*" \
-            --enablerepo="extras-common" \
-            --setopt=install_weak_deps=0 \
-            --setopt=keepcache=0 \
-            --best \
-            --nodocs \
-        epel-release && \
-    microdnf -y install \
-            --disablerepo="*" \
             --enablerepo="baseos" \
             --enablerepo="appstream" \
-            --enablerepo="epel" \
             --setopt=install_weak_deps=0 \
             --setopt=keepcache=0 \
             --best \
