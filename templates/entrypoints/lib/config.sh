@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 source "${ENTRYPOINT_LIBS}/logging.sh"
 source "${ENTRYPOINT_LIBS}/format.sh"
 
@@ -93,7 +95,7 @@ update_config_var() {
         sed -i -e "/^[#;] ${var_name}=/s/.*/&\n${var_name}=${var_value}/" "$config_path"
         log_message="$log_message added"
     else
-        sed -i -e '$a\' -e "${var_name}=${var_value}" "$config_path"
+        printf '\n%s=%s\n' "$var_name" "$var_value" >> "$config_path"
         log_message="$log_message added at the end"
     fi
 

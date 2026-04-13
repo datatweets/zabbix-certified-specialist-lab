@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -euo pipefail
 
@@ -7,6 +7,7 @@ source "${ENTRYPOINT_LIBS}/bootstrap.sh"
 
 source "${ENTRYPOINT_LIBS}/mysql.sh"
 source "${ENTRYPOINT_LIBS}/server-config.sh"
+source "${ENTRYPOINT_LIBS}/openssl.sh"
 
 update_config() {
     [ -n "${DB_SERVER_SOCKET:-}" ] && export ZBX_DB_SOCKET="${DB_SERVER_SOCKET}"
@@ -57,7 +58,7 @@ fi
 
 if [ "${1:-}" = '/usr/sbin/zabbix_server' ]; then
     prepare_service
-fi  
+fi
 
 if [ "${1:-}" = "init_db_only" ]; then
     prepare_database

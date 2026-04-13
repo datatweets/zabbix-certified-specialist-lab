@@ -1,3 +1,11 @@
+# shellcheck shell=bash
+
+: "${DAEMON_USER:=nginx}"
+: "${DAEMON_GROUP:=nginx}"
+
+# Internal directory for TLS related files, used when TLS*File specified as plain text values
+readonly ZABBIX_INTERNAL_ENC_DIR="${ZABBIX_USER_HOME_DIR}/enc_internal"
+
 prepare_php_config() {
     local db_server_type="${1:-}"
 
@@ -18,6 +26,8 @@ prepare_php_config() {
     export PHP_FPM_PM_MAX_REQUESTS
 
     if [ "$(id -u)" -eq 0 ]; then
+        [[ -f "$PHP_ZBX_CONFIG_FILE" ]] || error "Missing configuration file: $PHP_CONFIG_FILE"
+
         {
             echo "user = ${DAEMON_USER}"
             echo "group = ${DAEMON_GROUP}"
@@ -25,6 +35,10 @@ prepare_php_config() {
             echo "listen.group = ${DAEMON_GROUP}"
         } >> "$PHP_CONFIG_FILE"
     fi
+
+    : "${EXPOSE_WEB_SERVER_INFO:=on}"
+    [[ "${EXPOSE_WEB_SERVER_INFO,,}" != "off" ]] && EXPOSE_WEB_SERVER_INFO="on"
+    export EXPOSE_WEB_SERVER_INFO
 
     : "${ZBX_DENY_GUI_ACCESS:=false}"
     : "${ZBX_GUI_ACCESS_IP_RANGE:=['127.0.0.1']}"
@@ -63,7 +77,7 @@ prepare_php_config() {
 
     export ZBX_SERVER_HOST="${ZBX_SERVER_HOST}"
     export ZBX_SERVER_PORT="${ZBX_SERVER_PORT}"
-    export ZBX_SERVER_NAME="${ZBX_SERVER_NAME}"
+    export ZBX_SERVER_NAME="${ZBX_SERVER_NAME:-}"
 
     : "${ZBX_DB_ENCRYPTION:=false}"
     : "${ZBX_DB_VERIFY_HOST:=false}"

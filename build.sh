@@ -31,11 +31,12 @@ resolve_vcs_ref() {
     local major_version zbx_version_raw
     major_version="$(get_dockerfile_arg "MAJOR_VERSION")"
     zbx_version_raw="$(get_dockerfile_arg "ZBX_VERSION")"
+    zbx_version_raw=${zbx_version_raw##*.}
 
     [ -n "$major_version" ] || error "Unable to extract ARG MAJOR_VERSION from Dockerfile"
     [ -n "$zbx_version_raw" ] || error "Unable to extract ARG ZBX_VERSION from Dockerfile"
 
-    if [ "$zbx_version_raw" = '${MAJOR_VERSION}' ]; then
+    if [ "$zbx_version_raw" = "\${MAJOR_VERSION}" ]; then
         printf '%s\n' "$major_version"
     else
         printf '%s\n' "${major_version}.${zbx_version_raw%%.*}"
@@ -71,6 +72,7 @@ build_image() {
         -t "$image_tag" \
         --build-context sources="../../../sources" \
         --build-context config_templates="../../../templates/config" \
+        --build-context entrypoints="../../../templates/entrypoints" \
         --build-arg "VCS_REF=$vcs_ref" \
         --build-arg "BUILD_DATE=$(date -u '+%Y-%m-%dT%H:%M:%SZ')" \
         -f Dockerfile .
@@ -82,7 +84,7 @@ main() {
     local os version app_component vcs_ref runtime image_name
     os="${PWD##*/}"
     version="${1:-local}"
-    app_component="$(basename $(cd .. && pwd))"
+    app_component="$(basename "$(cd .. && pwd)")"
 
     validate_version "$version"
 

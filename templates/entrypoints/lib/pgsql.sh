@@ -1,3 +1,5 @@
+# shellcheck shell=bash
+
 # Enable PostgreSQL timescaleDB feature
 : "${ENABLE_TIMESCALEDB:=false}"
 
@@ -11,7 +13,7 @@ set_pg_env() {
     if [ -n "${ZBX_DBTLSCONNECT:-}" ]; then
         local pg_sslmode
         pg_sslmode="${ZBX_DBTLSCONNECT//_/-}"
-        export PGSSLMODE="${pgsslmode//required/require}"
+        export PGSSLMODE="${pg_sslmode//required/require}"
         export PGSSLROOTCERT="${ZBX_DBTLSCAFILE:-}"
         export PGSSLCERT="${ZBX_DBTLSCERTFILE:-}"
         export PGSSLKEY="${ZBX_DBTLSKEYFILE:-}"
@@ -148,7 +150,7 @@ psql_query() {
             "${psql_connect_args[@]}" \
             --username "${DB_SERVER_ROOT_USER}" \
             --command "$query" \
-            --dbname "$db" 2>/dev/null
+            --dbname "$db"
     })"
 
     clear_pg_env
