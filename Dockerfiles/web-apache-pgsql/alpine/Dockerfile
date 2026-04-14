@@ -59,23 +59,23 @@ RUN set -eux && \
             jq \
             apache2 \
             apache2-proxy \
-            php84-bcmath \
-            php84-ctype \
-            php84-curl \
-            php84-fpm \
-            php84-gd \
-            php84-gettext \
-            php84-json \
-            php84-ldap \
-            php84-pgsql \
-            php84-mbstring \
-            php84-session \
-            php84-simplexml \
-            php84-sockets \
-            php84-fileinfo \
-            php84-xmlreader \
-            php84-xmlwriter \
-            php84-openssl \
+            php85-bcmath \
+            php85-ctype \
+            php85-curl \
+            php85-fpm \
+            php85-gd \
+            php85-gettext \
+            php85-json \
+            php85-ldap \
+            php85-pgsql \
+            php85-mbstring \
+            php85-session \
+            php85-simplexml \
+            php85-sockets \
+            php85-fileinfo \
+            php85-xmlreader \
+            php85-xmlwriter \
+            php85-openssl \
             postgresql17-client" && \
     apk add \
             --no-cache \
@@ -112,7 +112,7 @@ RUN set -eux && \
         /etc/apache2/conf.d/proxy.conf \
         /etc/apache2/conf.d/languages.conf \
         /etc/apache2/conf.d/userdir.conf \
-        /etc/php84/php-fpm.d/www.conf \
+        /etc/php85/php-fpm.d/www.conf \
         /var/run/apache2/ && \
     ln -sf "${ZABBIX_CONF_DIR}/web/zabbix.conf.php" "${ZABBIX_WWW_ROOT}/conf/zabbix.conf.php" && \
     ln -sf "${ZABBIX_CONF_DIR}/web/maintenance.inc.php" "${ZABBIX_WWW_ROOT}/conf/maintenance.inc.php" && \
@@ -122,8 +122,8 @@ RUN set -eux && \
         ${ZABBIX_WWW_ROOT}/modules/ \
         ${ZABBIX_USER_HOME_DIR} \
         /etc/apache2/ \
-        /etc/php84/php-fpm.d/ \
-        /etc/php84/php-fpm.conf \
+        /etc/php85/php-fpm.d/ \
+        /etc/php85/php-fpm.conf \
         /var/lib/php/session/" && \
     chown --quiet -R zabbix:0 ${FIX_PERM_LIST} && \
     chmod -R g=u ${FIX_PERM_LIST}
