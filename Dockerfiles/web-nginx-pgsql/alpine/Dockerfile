@@ -31,8 +31,7 @@ ENV TERM=xterm \
     ZABBIX_USER_HOME_DIR=/var/lib/zabbix \
     ZABBIX_WWW_ROOT=/usr/share/zabbix
 
-ENV DB_ENGINE=mariadb \
-    NGINX_BIN=/usr/sbin/nginx \
+ENV NGINX_BIN=/usr/sbin/nginx \
     PHP_FPM_BIN=/usr/sbin/php-fpm85 \
     NGINX_CONFD_DIR=/etc/nginx/http.d \
     PHP_FPM_CONFIG=/etc/php85/php-fpm.conf \
