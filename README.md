@@ -53,7 +53,7 @@ Please also follow usage instructions of each Zabbix component image:
 > [!NOTE]
 > The following requires `make` and `docker compose` version 2.24.0 or greater.
 
-You can use the Docker Compose files for MySQL/MariaDB and PostgreSQL (**compose.yaml** and **compose_pgsql.yaml**, respectively) directly with the ``docker compose`` command. The `*-mysql` images default to MariaDB (`DB_ENGINE=mariadb`). The required images and the Compose file behavior can be configured through environment variables and the .env file. By default, Alpine-based images and the latest version from the current branch are used.
+You can use the Docker Compose files for MySQL or MariaDB, and PostgreSQL (**compose.yaml** and **compose_pgsql.yaml**, respectively) directly with the ``docker compose`` command. Images with `*-mysql` in the name support both MySQL and MariaDB as the database engine; set `DB_ENGINE` to `mysql` or `mariadb` in your environment or `.env` file. The required images and the Compose file behavior can be configured through environment variables and the .env file. By default, Alpine-based images and the latest version from the current branch are used.
 
 In addition, a Makefile is provided to configure and run the required Docker Compose files, supporting a variety of base operating system and database engine combinations, as well as to build Zabbix components locally.
 
