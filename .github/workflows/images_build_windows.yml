@@ -301,7 +301,7 @@ jobs:
       - name: Generate tags
         id: meta
         if: ${{ steps.toolchain_lookup.outputs.reuse != 'true' }}
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
         with:
           images: ${{ format('{0}/{1}/{2}{3}', env.DOCKER_REGISTRY, env.DOCKER_REPOSITORY, env.IMAGES_PREFIX, env.BASE_IMAGE_NAME ) }}
           context: ${{ env.TRUNK_ONLY_EVENT == 'true' && 'git' || '' }}
@@ -457,7 +457,7 @@ jobs:
 
       - name: Generate tags
         id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
         with:
           images: ${{ format('{0}/{1}/{2}{3}', env.DOCKER_REGISTRY, env.DOCKER_REPOSITORY, env.IMAGES_PREFIX, env.BASE_BUILD_IMAGE_NAME ) }}
           context: ${{ env.TRUNK_ONLY_EVENT == 'true' && 'git' || '' }}
@@ -645,7 +645,7 @@ jobs:
 
       - name: Generate tags
         id: meta
-        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # v6.0.0
+        uses: docker/metadata-action@80c7e94dd9b9319bd5eb7a0e0fe9291e23a2a2e9 # v6.1.0
         with:
           images: ${{ format('{0}/{1}/{2}{3}', env.DOCKER_REGISTRY, env.DOCKER_REPOSITORY, env.IMAGES_PREFIX, matrix.component ) }}
           context: ${{ env.TRUNK_ONLY_EVENT == 'true' && 'git' || '' }}
