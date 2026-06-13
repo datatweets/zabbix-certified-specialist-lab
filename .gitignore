@@ -8,3 +8,16 @@ Dockerfiles/*/rhel/secrets/*
 sources/*
 .*.orig
 .*.rej
+
+# --- Course authoring artifacts (kept out of the student-facing repo) ---
+# Internal instructions, source outlines, living lab-state, and verification
+# scripts are for the author only — students get the lab + the modules.
+CLAUDE.md
+content/outline/
+content/lab-state.md
+content/verification/
+
+# Editor / OS noise
+*.swp
+*~
+.idea/

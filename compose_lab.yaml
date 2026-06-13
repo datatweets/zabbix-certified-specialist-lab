@@ -1,0 +1,253 @@
+# compose_lab.yaml — Zabbix Certified Specialist training lab (canonical stack)
+#
+# Purpose-built for the course. MySQL-backed, exact container names from
+# CLAUDE.md Section 5, plus the seven demo systems we monitor (the "Online Shop").
+# Everything sits on one user-defined bridge network so containers resolve each
+# other by name (e.g. zabbix-server, zabbix-db, demo-nginx).
+#
+#   docker compose -f compose_lab.yaml up -d
+#   docker compose -f compose_lab.yaml ps
+#
+# Frontend: http://localhost:8080   (default login Admin / zabbix)
+#
+# NOTE: this is a TRAINING stack. Credentials are plain and intentionally simple
+# so students can follow along. Do not use this configuration in production.
+
+name: zabbix-lab
+
+x-zbx-image-tag: &zbx_tag "alpine-7.4-latest"
+
+networks:
+  zabbix-lab:
+    name: zabbix-lab
+    driver: bridge
+
+volumes:
+  zabbix-db-data:
+  demo-postgres-data:
+  demo-logs:          # shared between demo-log-app (writer) and zabbix-agent-basic (reader)
+  zabbix-proxy-data:
+
+services:
+  # ---------------------------------------------------------------------------
+  # Platform containers
+  # ---------------------------------------------------------------------------
+  zabbix-db:
+    image: mysql:8.4-oracle
+    container_name: zabbix-db
+    command:
+      - mysqld
+      - --skip-mysqlx
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_bin
+      - --log_bin_trust_function_creators=1
+    environment:
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix
+      MYSQL_ROOT_PASSWORD: root_pwd
+    volumes:
+      - zabbix-db-data:/var/lib/mysql
+    networks:
+      - zabbix-lab
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot_pwd"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+
+  zabbix-server:
+    image: zabbix/zabbix-server-mysql:alpine-7.4-latest
+    container_name: zabbix-server
+    environment:
+      DB_SERVER_HOST: zabbix-db
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix
+      MYSQL_ROOT_PASSWORD: root_pwd
+      ZBX_JAVAGATEWAY: zabbix-java-gateway
+      ZBX_STARTJAVAPOLLERS: 5
+      ZBX_WEBSERVICEURL: http://zabbix-web-service:10053/report
+      ZBX_STARTREPORTWRITERS: 1
+      ZBX_ENABLE_SNMP_TRAPS: "false"
+    ports:
+      - "10051:10051"
+    depends_on:
+      zabbix-db:
+        condition: service_healthy
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  zabbix-web:
+    image: zabbix/zabbix-web-nginx-mysql:alpine-7.4-latest
+    container_name: zabbix-web
+    environment:
+      DB_SERVER_HOST: zabbix-db
+      MYSQL_DATABASE: zabbix
+      MYSQL_USER: zabbix
+      MYSQL_PASSWORD: zabbix
+      MYSQL_ROOT_PASSWORD: root_pwd
+      ZBX_SERVER_HOST: zabbix-server
+      ZBX_SERVER_NAME: "Online Shop Monitoring Lab"
+      PHP_TZ: UTC
+    ports:
+      - "8080:8080"
+    depends_on:
+      zabbix-db:
+        condition: service_healthy
+      zabbix-server:
+        condition: service_started
+    networks:
+      - zabbix-lab
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
+    restart: unless-stopped
+
+  zabbix-java-gateway:
+    image: zabbix/zabbix-java-gateway:alpine-7.4-latest
+    container_name: zabbix-java-gateway
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  zabbix-web-service:
+    image: zabbix/zabbix-web-service:alpine-7.4-latest
+    container_name: zabbix-web-service
+    environment:
+      ZBX_ALLOWEDIP: "zabbix-server"
+    security_opt:
+      - seccomp:unconfined
+    cap_add:
+      - SYS_ADMIN
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  zabbix-agent-basic:
+    image: zabbix/zabbix-agent:alpine-7.4-latest
+    container_name: zabbix-agent-basic
+    environment:
+      ZBX_SERVER_HOST: "zabbix-server"
+      ZBX_HOSTNAME: "zabbix-agent-basic"
+    volumes:
+      - demo-logs:/var/log/demo:ro     # read the log file written by demo-log-app
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  zabbix-agent2-docker:
+    image: zabbix/zabbix-agent2:alpine-7.4-latest
+    container_name: zabbix-agent2-docker
+    user: root
+    privileged: true
+    environment:
+      ZBX_SERVER_HOST: "zabbix-server"
+      ZBX_HOSTNAME: "zabbix-agent2-docker"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  zabbix-proxy-branch:
+    image: zabbix/zabbix-proxy-sqlite3:alpine-7.4-latest
+    container_name: zabbix-proxy-branch
+    environment:
+      ZBX_SERVER_HOST: "zabbix-server"
+      ZBX_HOSTNAME: "zabbix-proxy-branch"
+      ZBX_PROXYMODE: "0"            # 0 = active proxy
+    volumes:
+      - zabbix-proxy-data:/var/lib/zabbix
+    depends_on:
+      zabbix-server:
+        condition: service_started
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Demo systems to monitor (the "Online Shop")
+  # ---------------------------------------------------------------------------
+  demo-nginx:
+    image: nginx:1.27-alpine
+    container_name: demo-nginx
+    volumes:
+      - ./content/lab/demo-nginx/index.html:/usr/share/nginx/html/index.html:ro
+      - ./content/lab/demo-nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  demo-api:
+    build: ./content/lab/demo-api
+    image: zabbix-lab/demo-api:latest
+    container_name: demo-api
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  demo-postgres:
+    image: postgres:16-alpine
+    container_name: demo-postgres
+    environment:
+      POSTGRES_USER: shop
+      POSTGRES_PASSWORD: shop
+      POSTGRES_DB: shop
+    volumes:
+      - demo-postgres-data:/var/lib/postgresql/data
+      - ./content/lab/demo-postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  demo-java-jmx:
+    image: tomcat:10.1-jdk17-temurin
+    container_name: demo-java-jmx
+    environment:
+      CATALINA_OPTS: >-
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=12345
+        -Dcom.sun.management.jmxremote.rmi.port=12345
+        -Dcom.sun.management.jmxremote.ssl=false
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Djava.rmi.server.hostname=demo-java-jmx
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  demo-snmp-device:
+    build: ./content/lab/demo-snmp-device
+    image: zabbix-lab/demo-snmp-device:latest
+    container_name: demo-snmp-device
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  demo-log-app:
+    build: ./content/lab/demo-log-app
+    image: zabbix-lab/demo-log-app:latest
+    container_name: demo-log-app
+    volumes:
+      - demo-logs:/var/log/demo     # writes /var/log/demo/app.log
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  demo-mailhog:
+    image: axllent/mailpit:latest
+    container_name: demo-mailhog
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: "true"
+      MP_SMTP_AUTH_ALLOW_INSECURE: "true"
+    ports:
+      - "8025:8025"                 # web UI: http://localhost:8025
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
