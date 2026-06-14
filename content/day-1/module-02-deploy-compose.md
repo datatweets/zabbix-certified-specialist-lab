@@ -35,7 +35,8 @@ runs each as its own container so you can see the boundaries clearly:
 - **Zabbix agent** (`zabbix-agent-basic`) and **Zabbix agent 2**
   (`zabbix-agent2-docker`) — lightweight collectors that run on (or beside)
   monitored hosts and report metrics such as CPU, memory, disk, and processes.
-  Agent 2 (written in Go) adds built-in plugins (Docker, databases, and more).
+  Zabbix agent 2 (written in Go) adds built-in plugins (Docker, databases, and
+  more).
 - **Zabbix proxy** (`zabbix-proxy-branch`) — an optional remote collector that
   gathers data on behalf of the server for a remote site, then forwards it. We
   configure it on Day 2 (Module 14); it is already running here, ready to use.
@@ -200,7 +201,13 @@ moving on — later modules assume a healthy lab.
    *System information confirms the server↔database↔frontend chain is healthy.*
 
 8. **Change the default administrator password.** In the left menu open
-   **User settings → Profile**, then click **Change password**. Fill in:
+   **User settings → Profile**.
+
+   ![User settings → Profile](assets/module-02/04-user-profile.png)
+   *Your personal profile page — language, time zone, theme, and auto-refresh
+   live here too. Click **Change password** to reveal the password fields.*
+
+   Click **Change password** and fill in:
    - **Current password:** `zabbix`
    - **Password:** a new password of your choice
    - **Password (once again):** the same new password
@@ -210,9 +217,7 @@ moving on — later modules assume a healthy lab.
    **Expected:** a green "User updated" confirmation. The default `zabbix`
    password no longer works; your new password does on the next sign-in.
 
-   ![User settings → Profile → Change password](assets/module-02/05-change-password.png)
-   *The Profile page with the password fields revealed. The same page also sets
-   your language, time zone, theme, and auto-refresh.*
+   ![The Profile page with the password fields revealed](assets/module-02/05-change-password.png)
 
 9. **Confirm the new password works.** Sign out (**User settings → Sign out**),
    then sign back in with `Admin` and your new password.

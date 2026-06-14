@@ -156,7 +156,7 @@ up into `trends` for long-term graphs.
 In **Monitoring → Latest data**, filter to the *Zabbix server* host, find
 **Configuration cache, % used**, and click its **Graph** link:
 
-![An item graph with its trigger threshold](assets/module-04/01-item-graph.png)
+![An item graph with its trigger threshold](assets/module-04/02-item-graph.png)
 *The green line is the stored item history (~24.49%). The legend shows
 last/min/avg/max, and the **trigger** "Excessive configuration cache usage
 [> 75]" is drawn as a threshold — so this one picture shows item → history →
@@ -196,8 +196,13 @@ the value is real at every hop.
 4. **Visualize** — in the frontend, go to **Monitoring → Latest data**, set the
    **Hosts** filter to `Zabbix server`, click **Apply**, find **Configuration
    cache, % used**, and click **Graph**.
-   **Expected:** a line graph of that item over the last hour, with last/min/avg/
-   max in the legend and a trigger threshold drawn on the chart.
+   **Expected:** the item appears with its latest stored value; clicking **Graph**
+   draws a line graph of that item over the last hour, with last/min/avg/max in
+   the legend and a trigger threshold drawn on the chart.
+
+   ![Latest data for the Zabbix server host — click Graph on the item row](assets/module-04/01-latest-data.png)
+   *Latest data shows the stored value (here `Configuration cache, % used`); the
+   **Graph** link on the right opens the graph shown in the demonstration above.*
 
 5. **Map the chain.** On paper or in discussion, label each component of the lab
    onto this flow:

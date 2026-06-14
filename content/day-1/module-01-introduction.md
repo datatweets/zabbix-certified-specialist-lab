@@ -129,6 +129,11 @@ as `Admin` / `zabbix` to show that this collection of containers is, together, a
 working monitoring product. (Deploying it yourself is Module 2 — here you are just
 seeing the whole board.)
 
+![The Global view dashboard — where this lab is heading](assets/module-01/01-overview-dashboard.png)
+*The finished monitoring product: the built-in Global view dashboard showing host
+availability, problems, system status, and top hosts across the lab. You build
+toward views like this over the coming modules.*
+
 ### The lab architecture
 
 Two groups of containers make up the lab. The **Zabbix platform** does the
