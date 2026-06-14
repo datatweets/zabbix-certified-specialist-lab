@@ -5,7 +5,7 @@
 By the end of this module participants can explain the difference between Zabbix
 agent and Zabbix agent 2, describe the key agent configuration parameters
 (`Server`, `ServerActive`, `Hostname`) and how passive and active checks use them,
-add the Agent 2 host to the lab and see its built-in Docker plugin in action, read
+add the agent 2 host to the lab and see its built-in Docker plugin in action, read
 agent logs, and diagnose a broken agent connection from the error messages.
 
 ## Topics
@@ -99,7 +99,7 @@ When something is wrong, the agent log is the first place to look. In Docker the
 log goes to the container's stdout:
 
 ```bash
-docker logs zabbix-agent2-docker --tail 5
+docker logs zabbix-agent2-docker --tail 8
 # ... active check configuration update from [zabbix-server:10051] is working again
 # ... active checks on server are active again
 ```
@@ -129,7 +129,7 @@ finally `docker logs zabbix-agent2-docker` to show the active-check messages.
 
 ## Hands-On Lab
 
-You already added the classic-agent host in Module 5; now add the Agent 2 host and
+You already added the classic-agent host in Module 5; now add the agent 2 host and
 compare them.
 
 1. **Confirm both agents answer.** From a terminal:
@@ -147,14 +147,14 @@ compare them.
    **Expected:** agent 2 returns `1`; the classic agent reports the key
    unsupported.
 
-3. **Add the Agent 2 host.** In **Data collection → Hosts → Create host**, set:
+3. **Add the agent 2 host.** In **Data collection → Hosts → Create host**, set:
    - **Host name:** `zabbix-agent2-docker`
    - **Host groups:** `Docker Lab`, `Linux Servers`
    - **Agent interface:** DNS `zabbix-agent2-docker`, **Connect to: DNS**, port
      `10050`
    - **Templates:** `Linux by Zabbix agent`
 
-   ![The Agent 2 host configuration form](assets/module-06/04-agent2-host-form.png)
+   ![The agent 2 host configuration form](assets/module-06/04-agent2-host-form.png)
    *The completed host form — identical layout to the classic-agent host from
    Module 5; only the name and DNS differ. Connect to is set to DNS.*
 
@@ -173,9 +173,9 @@ compare them.
    (CPU, memory, filesystems, network) — confirming both agents collect the same
    built-in keys.
 
-   ![Latest data for the Agent 2 host](assets/module-06/02-latest-agent2.png)
+   ![Latest data for the agent 2 host](assets/module-06/02-latest-agent2.png)
 
-5. **Add an Agent 2 plugin item.** On the `zabbix-agent2-docker` host, create an
+5. **Add an agent 2 plugin item.** On the `zabbix-agent2-docker` host, create an
    item:
    - **Name:** `Docker engine reachable (Agent 2 plugin)`
    - **Type:** `Zabbix agent`
@@ -185,7 +185,7 @@ compare them.
 
    ![The docker.ping item form](assets/module-06/05-docker-item-form.png)
    *Creating the `docker.ping` item — a plain Zabbix agent item, but the key is
-   served by Agent 2's built-in Docker plugin.*
+   served by agent 2's built-in Docker plugin.*
 
    Use **Test → Get value and test** before saving.
 

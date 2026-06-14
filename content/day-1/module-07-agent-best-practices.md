@@ -117,7 +117,8 @@ best-practice.)
 
 ## Docker-Based Demonstration
 
-The instructor contrasts the four states from the outline:
+The instructor contrasts the four states from the outline — passive check,
+active check, wrong hostname, and wrong server address:
 
 ```bash
 # passive check (server pulls) — works:
@@ -196,8 +197,8 @@ For an **active** check the instructor shows the agent log line
    docker exec zabbix-server zabbix_get -s auto-demo-agent -k agent.ping
    ```
    **Expected:** a connection error, and after a short delay the host's
-   Availability goes red. Use the workflow: `zabbix_get` errors → it's network/
-   agent-side; the agent is stopped.
+   availability is no longer green (it goes unavailable). Use the workflow:
+   `zabbix_get` errors → it's network/agent-side; the agent is stopped.
 
 6. **Clean up the demo agent.**
    ```bash
