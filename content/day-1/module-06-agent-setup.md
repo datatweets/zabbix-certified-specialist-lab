@@ -154,6 +154,10 @@ compare them.
      `10050`
    - **Templates:** `Linux by Zabbix agent`
 
+   ![The Agent 2 host configuration form](assets/module-06/04-agent2-host-form.png)
+   *The completed host form — identical layout to the classic-agent host from
+   Module 5; only the name and DNS differ. Connect to is set to DNS.*
+
    Click **Add**.
    **Expected:** within a minute the host shows a green **ZBX** in the Hosts list,
    next to the classic-agent host.
@@ -179,11 +183,18 @@ compare them.
    - **Type of information:** `Numeric (unsigned)`
    - **Tags:** `component=docker`, `plugin=agent2`
 
+   ![The docker.ping item form](assets/module-06/05-docker-item-form.png)
+   *Creating the `docker.ping` item — a plain Zabbix agent item, but the key is
+   served by Agent 2's built-in Docker plugin.*
+
    Use **Test → Get value and test** before saving.
+
+   ![Test item returns 1 — the Docker engine is reachable](assets/module-06/06-docker-item-test.png)
+
    **Expected:** Test returns **`1`**; after saving, Latest data shows the item =
    `1`. This metric is impossible on the classic agent.
 
-   ![The Docker-plugin item collecting on Agent 2](assets/module-06/03-docker-item.png)
+   ![The Docker-plugin item collecting in Latest data](assets/module-06/03-docker-item.png)
 
 6. **Read the agent log.**
    ```bash
@@ -201,7 +212,14 @@ compare them.
    ```
    **Expected:** the value request fails with a connection error
    (`connection error (POLLERR,POLLHUP)`), and within a few minutes the host's
-   **Availability** turns red in the Hosts list. Now recover:
+   **Availability** stops being green in the Hosts list (it goes unavailable).
+
+   ![zabbix-agent2-docker availability is no longer green after the agent is stopped](assets/module-06/07-host-unavailable.png)
+   *Compare the three hosts: `zabbix-agent-basic` is green (available),
+   `zabbix-agent2-docker` has gone unavailable, and the built-in *Zabbix server*
+   host is red as usual.*
+
+   Now recover:
    ```bash
    docker start zabbix-agent2-docker
    docker exec zabbix-server zabbix_get -s zabbix-agent2-docker -k agent.ping   # 1

@@ -157,14 +157,23 @@ For an **active** check the instructor shows the agent log line
 
    ![An active item — note no interface, Test disabled](assets/module-07/04-active-item.png)
 
+   ![The active item's Tags tab](assets/module-07/06-active-item-tags.png)
+   *Tags identify this as an active API check (`component: api`, `check: active`).*
+
 3. **Set up auto-registration.**
    1. Go to **Alerts → Actions → Autoregistration actions → Create action**.
+
+      ![Autoregistration actions list](assets/module-07/01-autoreg-action.png)
+
    2. **Name:** `Lab auto-registration`. Add a **Condition**: *Host metadata
       contains* `lab-autoreg`.
-   3. On **Operations**, add: **Add host**, **Add to host groups** → `Docker Lab`,
-      **Link templates** → `Linux by Zabbix agent`. Save.
 
-   ![The autoregistration action condition](assets/module-07/02-autoreg-action-detail.png)
+      ![The autoregistration action condition](assets/module-07/02-autoreg-action-detail.png)
+
+   3. On the **Operations** tab, add: **Add host**, **Add to host groups** →
+      `Docker Lab`, **Link templates** → `Linux by Zabbix agent`. Save.
+
+      ![The three autoregistration operations](assets/module-07/05-autoreg-operations.png)
 
 4. **Trigger auto-registration** with a brand-new agent that carries the matching
    metadata:
