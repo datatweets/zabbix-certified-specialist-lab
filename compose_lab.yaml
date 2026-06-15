@@ -59,7 +59,10 @@ services:
     restart: unless-stopped
 
   zabbix-server:
-    image: zabbix/zabbix-server-mysql:alpine-7.4-latest
+    # Official Zabbix server image extended with the PostgreSQL ODBC driver
+    # (Module 22 — ODBC database monitoring). See content/lab/zabbix-server/.
+    build: ./content/lab/zabbix-server
+    image: zabbix-lab/zabbix-server-mysql:alpine-7.4
     container_name: zabbix-server
     environment:
       DB_SERVER_HOST: zabbix-db
