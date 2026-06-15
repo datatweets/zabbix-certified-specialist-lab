@@ -138,6 +138,9 @@ services:
       ZBX_HOSTNAME: "zabbix-agent-basic"
     volumes:
       - demo-logs:/var/log/demo:ro     # read the log file written by demo-log-app
+      # Custom data collection (Module 11): UserParameter script + config
+      - ./content/lab/agent-userparams/online_shop.sh:/usr/local/bin/online_shop.sh:ro
+      - ./content/lab/agent-userparams/online_shop.conf:/etc/zabbix/zabbix_agentd.d/online_shop.conf:ro
     networks:
       - zabbix-lab
     restart: unless-stopped
