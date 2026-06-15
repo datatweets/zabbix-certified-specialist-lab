@@ -1,0 +1,31 @@
+zabbix_export:
+  version: '7.4'
+  template_groups:
+    - uuid: c923c9fb7e7a465ba5eda8450b3aba57
+      name: 'Templates/Online Shop'
+  templates:
+    - uuid: 774413ab0784450aaa06e8c7411cf5e9
+      template: 'Online Shop App by Zabbix agent'
+      name: 'Online Shop App by Zabbix agent'
+      groups:
+        - name: 'Templates/Online Shop'
+      discovery_rules:
+        - uuid: 10824423287a4b5b8facc28a3bcbd54e
+          name: 'Online Shop metric discovery'
+          key: 'app.shop[discovery]'
+          filter:
+            conditions:
+              - macro: '{#FIELD}'
+                value: ^orders$
+                operator: NOT_MATCHES_REGEX
+          item_prototypes:
+            - uuid: 05127cf6014142238dc925c79426ae4d
+              name: 'Online Shop: {#LABEL}'
+              key: 'app.shop[{#FIELD}]'
+              trigger_prototypes:
+                - uuid: a309cb9d329d48859cc1434b045c4b3a
+                  expression: 'nodata(/Online Shop App by Zabbix agent/app.shop[{#FIELD}],10m)=1'
+                  name: 'Online Shop: no data for {#LABEL}'
+                  priority: AVERAGE
+                  manual_close: 'YES'
+
