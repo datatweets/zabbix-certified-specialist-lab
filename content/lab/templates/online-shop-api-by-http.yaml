@@ -1,0 +1,91 @@
+zabbix_export:
+  version: '7.4'
+  template_groups:
+    - uuid: c923c9fb7e7a465ba5eda8450b3aba57
+      name: 'Templates/Online Shop'
+  templates:
+    - uuid: 5ac85526fcfe4e02b4192a63a040fd35
+      template: 'Online Shop API by HTTP'
+      name: 'Online Shop API by HTTP'
+      groups:
+        - name: 'Templates/Online Shop'
+      items:
+        - uuid: bb5ddd2467f2477ba0f3d40a820861f4
+          name: 'Online Shop API: raw metrics (JSON)'
+          type: HTTP_AGENT
+          key: api.metrics.raw
+          delay: 30s
+          value_type: TEXT
+          url: '{$API.URL}/metrics'
+          tags:
+            - tag: component
+              value: api
+          triggers:
+            - uuid: c8ad31f673b64cb1aa6fbeafa4cb2fb3
+              expression: 'nodata(/Online Shop API by HTTP/api.metrics.raw,2m)=1'
+              name: 'Online Shop API is unreachable'
+              priority: HIGH
+              manual_close: 'YES'
+        - uuid: 0cae76fc4c4f4b1da16701d0db73369f
+          name: 'Online Shop API: orders (total)'
+          type: DEPENDENT
+          key: api.orders
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.orders
+          master_item:
+            key: api.metrics.raw
+          tags:
+            - tag: component
+              value: api
+        - uuid: 110ae7307a90493183069b46802f42c2
+          name: 'Online Shop API: queue length'
+          type: DEPENDENT
+          key: api.queue.length
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.queue_length
+          master_item:
+            key: api.metrics.raw
+          tags:
+            - tag: component
+              value: api
+          triggers:
+            - uuid: 8db2eb47f31d48e28665daa8e1bd1b63
+              expression: 'last(/Online Shop API by HTTP/api.queue.length)>{$API.QUEUE.MAX}'
+              recovery_mode: RECOVERY_EXPRESSION
+              recovery_expression: 'last(/Online Shop API by HTTP/api.queue.length)<10'
+              name: 'Online Shop API queue is backing up (>{$API.QUEUE.MAX})'
+              priority: WARNING
+        - uuid: c9083513743e49ffa186ac5e8df80957
+          name: 'Online Shop API: response time'
+          type: DEPENDENT
+          key: api.response.time
+          value_type: FLOAT
+          units: ms
+          preprocessing:
+            - type: JSONPATH
+              parameters:
+                - $.response_time_ms
+          master_item:
+            key: api.metrics.raw
+          tags:
+            - tag: component
+              value: api
+          triggers:
+            - uuid: 0f2941197cd545629393eff1de8a8d9e
+              expression: 'last(/Online Shop API by HTTP/api.response.time)>{$API.RESPONSE.MAX}'
+              name: 'Online Shop API response time is high (>{$API.RESPONSE.MAX}ms)'
+              priority: AVERAGE
+      macros:
+        - macro: '{$API.QUEUE.MAX}'
+          value: '40'
+          description: 'Queue length warning threshold'
+        - macro: '{$API.RESPONSE.MAX}'
+          value: '200'
+          description: 'Response time (ms) warning threshold'
+        - macro: '{$API.URL}'
+          value: 'http://demo-api:5000'
+          description: 'Base URL of the Online Shop API'
