@@ -89,3 +89,4 @@ zabbix_export:
         - macro: '{$API.URL}'
           value: 'http://demo-api:5000'
           description: 'Base URL of the Online Shop API'
+
