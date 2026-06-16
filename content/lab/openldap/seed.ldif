@@ -1,0 +1,16 @@
+dn: uid=jdoe,ou=users,dc=shop,dc=example,dc=org
+objectClass: inetOrgPerson
+objectClass: posixAccount
+cn: John Doe
+sn: Doe
+uid: jdoe
+uidNumber: 1001
+gidNumber: 1001
+homeDirectory: /home/jdoe
+userPassword: jdoepass
+
+dn: cn=zabbixadmins,ou=users,dc=shop,dc=example,dc=org
+objectClass: posixGroup
+cn: zabbixadmins
+gidNumber: 5000
+memberUid: jdoe

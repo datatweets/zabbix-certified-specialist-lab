@@ -27,6 +27,7 @@ volumes:
   demo-postgres-data:
   demo-logs:          # shared between demo-log-app (writer) and zabbix-agent-basic (reader)
   zabbix-proxy-data:
+  zabbix-proxy-data-2:   # second branch proxy for proxy-group HA (Module 45)
 
 services:
   # ---------------------------------------------------------------------------
@@ -144,6 +145,9 @@ services:
       # Custom data collection (Module 11): UserParameter script + config
       - ./content/lab/agent-userparams/online_shop.sh:/usr/local/bin/online_shop.sh:ro
       - ./content/lab/agent-userparams/online_shop.conf:/etc/zabbix/zabbix_agentd.d/online_shop.conf:ro
+      # PSK key (extra Module 46) — mounted but only used once you add the PSK env
+      # in that module; the baseline agent runs unencrypted so Modules 5–8 work.
+      - ./content/lab/agent-psk/agent.psk:/var/lib/zabbix/enc/agent.psk:ro
     networks:
       - zabbix-lab
     restart: unless-stopped
@@ -174,6 +178,44 @@ services:
     depends_on:
       zabbix-server:
         condition: service_started
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  # Second branch proxy — paired with zabbix-proxy-branch in a proxy group so the
+  # server can fail monitoring over between them (proxy HA, Module 45).
+  zabbix-proxy-branch-2:
+    image: zabbix/zabbix-proxy-sqlite3:alpine-7.4-latest
+    container_name: zabbix-proxy-branch-2
+    profiles: ["extra"]          # extra Module 45 only; not part of the baseline 15
+    environment:
+      ZBX_SERVER_HOST: "zabbix-server"
+      ZBX_HOSTNAME: "zabbix-proxy-branch-2"
+      ZBX_PROXYMODE: "0"            # 0 = active proxy
+    volumes:
+      - zabbix-proxy-data-2:/var/lib/zabbix
+    depends_on:
+      zabbix-server:
+        condition: service_started
+    networks:
+      - zabbix-lab
+    restart: unless-stopped
+
+  # OpenLDAP directory for external authentication + JIT provisioning (Module 47).
+  # Creates the base tree (dc=shop,dc=example,dc=org) and an admin bind account;
+  # the demo user (jdoe) and group (zabbixadmins) are added in the Module 47 lab
+  # via ldapadd of content/lab/openldap/seed.ldif. Multi-arch image (amd64/arm64).
+  lab-openldap:
+    image: bitnamilegacy/openldap:latest
+    container_name: lab-openldap
+    profiles: ["extra"]          # extra Module 47 only; not part of the baseline 15
+    environment:
+      LDAP_ROOT: "dc=shop,dc=example,dc=org"
+      LDAP_ADMIN_USERNAME: "admin"
+      LDAP_ADMIN_PASSWORD: "adminpassword"
+      LDAP_USER_DC: "users"
+    ports:
+      - "1389:1389"
     networks:
       - zabbix-lab
     restart: unless-stopped

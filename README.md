@@ -131,6 +131,26 @@ is **complete — all 40 modules**, plus exam materials and a final project.
 - **39.** [What's Next](content/day-5/module-39-whats-next.md)
 - **40.** [Final Capstone Project](content/day-5/module-40-final-capstone.md) — guided [Final Practical Lab](content/day-5/module-40-final-practical-lab.md)
 
+**Extra modules — optional advanced topics** ([`content/extra/`](content/extra/)) — production-grade enrichments beyond the core ZCS scope; each runs in the same `compose_lab.yaml` stack
+
+- **41.** [Advanced SNMP — SNMPv3 and bulk walks](content/extra/module-41-advanced-snmp.md)
+- **43.** [Monitoring Docker with Zabbix agent 2](content/extra/module-43-docker-monitoring.md)
+- **44.** [Predictive and Trend Triggers](content/extra/module-44-predictive-triggers.md)
+- **45.** [Proxy High Availability with Proxy Groups](content/extra/module-45-proxy-ha.md)
+- **46.** [Encrypting Zabbix — PSK and Database TLS](content/extra/module-46-encryption.md)
+- **47.** [Directory Authentication with OpenLDAP and JIT](content/extra/module-47-openldap-auth.md)
+- **48.** [External Alerting with Slack](content/extra/module-48-slack-alerting.md)
+- **49.** [Backup, Restore, and Database Partitioning](content/extra/module-49-backup-and-partitioning.md)
+- **50.** [LLD Host Prototypes and Interactive Frontend Scripts](content/extra/module-50-host-prototypes-and-scripts.md)
+
+> These are **additive** — they don't change the baseline. The two extra
+> containers (`zabbix-proxy-branch-2` for proxy HA, `lab-openldap` for LDAP) sit
+> behind a Compose `extra` profile, so the default `docker compose up -d` still
+> starts the baseline 15 containers; each extra module starts what it needs (e.g.
+> `docker compose -f compose_lab.yaml up -d lab-openldap`). Module 48 (Slack)
+> needs your own workspace + bot token; Module 42 (browser items) is omitted —
+> not functional on Zabbix 7.4.11.
+
 ### Exam preparation
 
 Self-study materials live under [`content/exam/`](content/exam/):
