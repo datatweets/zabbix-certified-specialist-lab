@@ -18,6 +18,12 @@ content/lab-state.md
 content/verification/
 resources/
 
+# Instructor (full) module versions are author-only; publish only the -SC copies.
+content/day-*/module-*.md
+content/extra/module-*.md
+!content/day-*/module-*-SC.md
+!content/extra/module-*-SC.md
+
 # Editor / OS noise
 *.swp
 *~
