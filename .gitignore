@@ -28,3 +28,4 @@ content/extra/module-*.md
 *.swp
 *~
 .idea/
+transcripts/
